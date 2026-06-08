@@ -7,9 +7,9 @@
 UMM环境的搭建说明见下方链接里的官方wiki。
 
 Multiple KC mod for PF:Wotr.
-Also a UMM mod, thanks to their great work so this mod can exists.
+Also a UMM mod, most of the functions are built using harmony patches.
 
-Developed using Visual Studio 2022, clone the project, load into VS, set up an 'Unity Mod Manager' mod development enviroment, things are good to go.
+Clone the project, load into VS (Mine is 2022), set up an 'Unity Mod Manager' mod development enviroment, things are good to go.
 Instructions for setting up UMM enviroment can be found down the link below. 
 
 https://github.com/newman55/unity-mod-manager/wiki/How-to-create-a-mod-for-unity-game
