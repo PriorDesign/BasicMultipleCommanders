@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <LangVersion>latest</LangVersion>
+	  <!-- Set to net46 for Kingmaker -->
+	  <TargetFramework>net481</TargetFramework>
+	  <BaseOutputPath>bin\release\BasicMultiCommander</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\Unity*.dll" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\Core*.dll" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\Owlcat*.dll" Publicize="true" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll*" Publicize="true" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\Assembly-CSharp.dll*" Publicize="true" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\DOTween*" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\UniRx.dll*" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\Newtonsoft.Json.dll*" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\UnityModManager\UnityModManager.dll*" Publicize="true" Private="false" />
+	  <Reference Include="F:\SteamLibrary2\PathfinderWOTR\Wrath_Data\Managed\UnityModManager\0Harmony.dll*" Private="false" />
+	  <Reference Include="System.IO.Compression" Private="false" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" IncludeAssets="build; contentfiles" Version="0.4.2" PrivateAssets="all" />
+		<PackageReference Include="MicroUtils.HarmonyAnalyzers" IncludeAssets="runtime; build; native; contentfiles; analyzers" Version="*-*" PrivateAssets="all" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Main.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
