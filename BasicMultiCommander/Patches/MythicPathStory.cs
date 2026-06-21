@@ -14,6 +14,7 @@ using Kingmaker.Designers.EventConditionActionSystem.Evaluators;
 using Kingmaker.DialogSystem.Blueprints;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.PubSubSystem;
+using Kingmaker.QA;
 using Kingmaker.UI.MVVM._VM.Dialog.Dialog;
 using Owlcat.QA.Validation;
 //using Owlcat.Runtime.Core;
@@ -521,7 +522,7 @@ namespace BasicMultiCommander.Patches
             }
         }
 
-        //副角色神话道途视作主角色持有，并完全开启机制
+        //副角色神话道途视作主角色持有，并完全开启机制 
         [HarmonyPatch(typeof(UnitClass), nameof(UnitClass.CheckCondition))]
         internal static class BMC_Deputy_Character_Mythic_Quest_Patch_Dangerously_DEEP
         {
@@ -542,13 +543,23 @@ namespace BasicMultiCommander.Patches
                 //
 
                 var charList = LogicStructures.GetAllCharacterList().Where(actor => LogicStructures.isPlayerActorBlueprintType(actor)).ToList();
-                if (__result == true && __instance.Class.NameForAcronym.Contains("Devil") && __instance.Not)
+                if (__instance.Class.NameForAcronym.Contains("Devil") && __instance.Not) //NOT 逻辑是__result已经得出后取反
                 {
                     foreach (var unit in charList)
                     {
-                        if (!unit.IsMainCharacter && !unit.Descriptor.m_IsEssentialForGame) continue;
+                        if (!unit.IsMainCharacter && !unit.Descriptor.m_IsEssentialForGame)
+                        {
+                            PFLog.Mods.Error("This character is skipped, Character's name is" + unit.CharacterName);
+                            continue;
+                        }
                         var deputyCommanderMythic = unit.Progression.LastMythicClass;
-                        if (deputyCommanderMythic == null) continue;
+                        //deputyCommanderMythic = unit.Descriptor.Progression.GetCurrentMythicClass().CharacterClass;
+                        if (deputyCommanderMythic == null)
+                        {
+                            PFLog.Mods.Error("This character is skipped because of no mythic, Character's name is" + unit.CharacterName);
+                            continue;
+
+                        }
                         if (__instance.Owner != null && __instance.Owner.name.Contains("PlayerIs"))
                         {
 
@@ -557,7 +568,8 @@ namespace BasicMultiCommander.Patches
                             if (!deputyCommanderMythic.NameForAcronym.Contains("Devil") && __instance.Owner.name.Contains(teamLastMythic))
                             {
                                 __result = false;
-                                break;
+                                PFLog.Mods.Error("Devil is blocked, Character's name is" + unit.CharacterName);
+                                return;
                             }
 
                         }
@@ -566,13 +578,58 @@ namespace BasicMultiCommander.Patches
                             if (!deputyCommanderMythic.NameForAcronym.Contains("Devil"))
                             {
                                 __result = false;
-                                break;
+                                PFLog.Mods.Error("Devil is blocked, Character's name is" + unit.CharacterName);
+                                return;
                             }
                         }
                     }
+
                     return;
                 }
-
+                //if (__result == false && __instance.Class.NameForAcronym.Contains("Devil") && __instance.Not) //NOT 逻辑是__result已经得出后取反
+                //{
+                //    var i = 0;
+                //    foreach (var unit in charList)
+                //    {
+                //        i++;
+                //        PFLog.Mods.Error("i is" + i);
+                //        if (!unit.IsMainCharacter && !unit.Descriptor.m_IsEssentialForGame)
+                //        {
+                //            PFLog.Mods.Error("This character is skipped, Character's name is" + unit.CharacterName);
+                //            continue;
+                //        }
+                //        var deputyCommanderMythic = unit.Progression.LastMythicClass;
+                //        //deputyCommanderMythic = unit.Descriptor.Progression.GetCurrentMythicClass().CharacterClass;
+                //        if (deputyCommanderMythic == null)
+                //        {
+                //            PFLog.Mods.Error("This character is skipped, Character's name is" + unit.CharacterName);
+                //            continue;
+                //        }
+                //        if (__instance.Owner != null && __instance.Owner.name.Contains("PlayerIs"))
+                //        {
+                //            var teamLastMythic = deputyCommanderMythic.NameForAcronym.Replace("MythicClass", "").Replace("Class", "").Replace("Golden", "");
+                //            if (!deputyCommanderMythic.NameForAcronym.Contains("Devil") && __instance.Owner.name.Contains(teamLastMythic))
+                //            {
+                //                PFLog.Mods.Error("Devil is blocked, Character's name is" + unit.CharacterName);
+                //                __result = true;
+                //                break;
+                //            }
+                //        }
+                //        else
+                //        {
+                //            if (!deputyCommanderMythic.NameForAcronym.Contains("Devil"))
+                //            {
+                //                __result = true;
+                //                PFLog.Mods.Error("Devil is blocked, Character's name is" + unit.CharacterName);
+                //                break;
+                //            }
+                //        }
+                //        PFLog.Mods.Error("ib is" + i);
+                //        //return;
+                //    }
+                //    //__result = true;
+                //    return;
+                //}
                 BlueprintCharacterClass checkedClass = __instance.Class;
                 try
                 {
@@ -609,8 +666,6 @@ namespace BasicMultiCommander.Patches
                 {
                     if (unit.IsMainCharacter || !unit.Descriptor.m_IsEssentialForGame) continue;
                     var deputyCommanderMythic = unit.Progression.LastMythicClass;
-
-
                     var requiredMythicPath = unit.Descriptor.Progression.GetClassData(__instance.Class);
                     if (requiredMythicPath == null) continue;
                     if (requiredMythicPath.CharacterClass.NameForAcronym == "LegendClass")
